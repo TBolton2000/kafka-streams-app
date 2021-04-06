@@ -24,6 +24,7 @@ import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
@@ -125,9 +126,17 @@ public class PrimeStreamApp {
     }
 
     public static void main(String[] args) throws Exception {
+
+        if (args.length == 0)
+        {
+            System.out.println("Pass Kafka Broker IP Address as command line argument");
+            return;
+        }
+
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-prime-check");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, args[0]);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         Map<String, Object> serdeProps = new HashMap<>();
         final Serializer<PrimeData> primeDataSerializer = new JsonPOJOSerializer<>();
